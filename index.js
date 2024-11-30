@@ -1,64 +1,14 @@
 import express from "express";
-import { conexion_db } from "./conexion.js";
-import { actualizarEquipo, listarEquipos, registrarEquipo, eliminarEquipo, consultarId } from "./functions/equipos/consultas_db.js";
+import { actualizarEquipo, listarEquipos, registrarEquipo, eliminarEquipo } from "./functions/equipos/consultas_db.js";
+import {validarRegistro, validarActualizacion, validacionDelete } from "./middleware/equipo/validations.js"
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
 
-const validarRegistro = (req, res, next) => {
-    if(!req.body.nombre || req.body.nombre.trim()  == ""){
-        return res.status(422).json({ message: "Por favor enviar el nombre." })
-    }
-    if(!req.body.marca || req.body.marca.trim()  == ""){
-        return res.status(422).json({ message: "Por favor ingresar la marca" })
-    }
-    if(!req.body.cantidad){
-        return res.status(422).json({ message: "Por favor ingresar la cantidad" })
-    }
-    if(isNaN(req.body.cantidad)){
-        return res.status(422).json({ message: "La cantidad debe ser numérica." })
-    }
-    next()
-}
 
-const validarActualizacion = async (req, res, next) => {
-    const idEquipo = req.params.equipoId
-    if(isNaN(idEquipo)){
-        return res.status(422).json({ message: "El Id debe ser numérica." })
-    }
-    const validacion = await consultarId(idEquipo)
-    if(!validacion){
-        return res.status(404).json({ message: "Equipo a actualizar no existe" })
-    }
-    if(!req.body.nombre || req.body.nombre.trim()  == ""){
-        return res.status(422).json({ message: "Por favor enviar el nombre." })
-    }
-    if(!req.body.marca || req.body.marca.trim()  == ""){
-        return res.status(422).json({ message: "Por favor ingresar la marca" })
-    }
-    if(!req.body.cantidad){
-        return res.status(422).json({ message: "Por favor ingresar la cantidad" })
-    }
-    if(isNaN(req.body.cantidad)){
-        return res.status(422).json({ message: "La cantidad debe ser numérica." })
-    }
-
-    next()
-}
-
-const validacionDelete = async (req, res, next) => {
-    const idEquipo = req.params.id
-    if(isNaN(idEquipo)){
-        return res.status(422).json({ message: "El Id debe ser numérica." })
-    }
-    const validacion = await consultarId(idEquipo)
-    if(!validacion){
-        return res.status(404).json({ message: "Equipo a eliminar no existe" })
-    }
-    next()
-}
+//RUTAS TABLA EQUIPOS --------------------------------------->
 app.get("/equipos", async (req, res) => {
   const listadoEquipos = await listarEquipos();
   res.json({
@@ -87,5 +37,8 @@ app.delete("/equipos/:id", validacionDelete, async (req, res) => {
     const equipo = await eliminarEquipo(req.params.id)
     res.status(equipo.code).json({ message: equipo.message, data: equipo.eliminado || null })
 });
+//FIN RUTAS TABLA EQUIPOS --------------------------------------->
+
+//RUTAS TABLA VEHICULOS --------------------------------------->
 
 app.listen(port, () => console.log(`Servidor escuchando en el puerto ${port}`));
