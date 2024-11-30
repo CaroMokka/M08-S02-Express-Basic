@@ -10,6 +10,11 @@ const listarEquipos = async () => {
 
     return listado
 }
+
+const consultarId = async (id) => {
+    const equipo = await conexion_db.query("SELECT * FROM equipos WHERE id=$1", [id])
+    return equipo.rows[0] || null
+}
 const registrarEquipo = async (nombre, marca, cantidad) => {
     try{
         const argumentos = {
@@ -57,4 +62,4 @@ const eliminarEquipo = async (equipoId) => {
      }
 }
 
-export { listarEquipos, registrarEquipo, actualizarEquipo, eliminarEquipo } 
+export { listarEquipos, registrarEquipo, actualizarEquipo, eliminarEquipo, consultarId } 
