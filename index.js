@@ -1,5 +1,5 @@
 import express from "express";
-import { actualizarEquipo, listarEquipos, registrarEquipo } from "./functions/equipos/consultas_db.js";
+import { actualizarEquipo, listarEquipos, registrarEquipo, eliminarEquipo } from "./functions/equipos/consultas_db.js";
 
 const app = express();
 const port = 3000;
@@ -28,6 +28,10 @@ app.put("/equipos/:equipoId", async (req, res) => {
 
 });
 
-app.delete("/equipos/:id", (req, res) => {});
+app.delete("/equipos/:id", async (req, res) => {
+    const equipo = await eliminarEquipo(req.params.id)
+    console.log("Equipo",equipo)
+    res.status(equipo.code).json({ message: equipo.message, data: equipo.eliminado || null })
+});
 
 app.listen(port, () => console.log(`Servidor escuchando en el puerto ${port}`));

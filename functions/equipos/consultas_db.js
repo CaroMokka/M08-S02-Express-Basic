@@ -43,6 +43,18 @@ const actualizarEquipo = async (equipoId, dataEquipo) => {
         return { code: 500, message: "Error en la actualización de equipo." }
     }
 }
-const eliminarEquipo = () => {}
+const eliminarEquipo = async (equipoId) => {
+     try{
+        const argumentos = {
+            text: "DELETE FROM equipos WHERE id=$1 RETURNING *",
+            values: [equipoId]
+        }
+        const { rows: eliminado } = await conexion_db.query(argumentos)
+        return { code: 200, eliminado, message: "Equipo a sido eliminado con éxito."}
+     }catch(err){
+        console.log(err.message)
+        return { code: 500, message: "Ocurrió un error eliminando equipo." }
+     }
+}
 
-export { listarEquipos, registrarEquipo, actualizarEquipo } 
+export { listarEquipos, registrarEquipo, actualizarEquipo, eliminarEquipo } 
