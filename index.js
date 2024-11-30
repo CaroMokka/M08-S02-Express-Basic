@@ -1,5 +1,5 @@
 import express from "express";
-import { listarEquipos, registrarEquipo } from "./functions/equipos/consultas_db.js";
+import { actualizarEquipo, listarEquipos, registrarEquipo } from "./functions/equipos/consultas_db.js";
 
 const app = express();
 const port = 3000;
@@ -20,7 +20,13 @@ app.post("/equipos", async (req, res) => {
     res.status(equipoRegistrado.code).json({ message: equipoRegistrado.message, data: equipoRegistrado.registro || null })
 });
 
-app.put("/equipos/:equipoId", (req, res) => {});
+app.put("/equipos/:equipoId", async (req, res) => {
+    const dataEquipo = req.body
+    const idEquipo = req.params.equipoId  
+    const  equipo = await actualizarEquipo(idEquipo, dataEquipo)
+    res.status(equipo.code).json({ message: equipo.message, data: equipo.actualizado || null  })
+
+});
 
 app.delete("/equipos/:id", (req, res) => {});
 
