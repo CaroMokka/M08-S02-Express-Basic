@@ -11,7 +11,7 @@ const validarRegistroVehiculo = (req, res, next) => {
 const validarModificacion = async (req, res, next) => {
     const id_vehiculo = req.params.id
     if(isNaN(id_vehiculo)){
-        return res.status(422).json({ message: "El Id debe ser numérica." })
+        return res.status(422).json({ message: "El Id debe ser numérico." })
     }
     const validacion = await consultarIdVehiculo(id_vehiculo)
     if(!validacion){
@@ -26,5 +26,16 @@ const validarModificacion = async (req, res, next) => {
     next()
     
 }
+const validarEliminacion = async (req, res, next) => {
+    const id_vehiculo = req.params.id
+    if(isNaN(id_vehiculo)){
+        return res.status(422).json({ message: "El Id debe ser numérico." })
+    }
+    const validacion = await consultarIdVehiculo(id_vehiculo)
+    if(!validacion){
+        return res.status(404).json({ message: "Vehículo a eliminnar no existe" })
+    }
+    next()
+}
 
-export { validarRegistroVehiculo, validarModificacion }
+export { validarRegistroVehiculo, validarModificacion, validarEliminacion }

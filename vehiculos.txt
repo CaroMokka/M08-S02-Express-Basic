@@ -10,8 +10,8 @@ create table vehiculos(
 Crear una API REST de gestión de vehículos. Se deben desarrollar las siguientes rutas.
  OK - GET /vehiculo -> Listar Vehículos.
  OK - POST /vehiculo -> Registrar Vehículos.
-- PUT /vehiculo/:id -> Modificar Vehículos.
-- DELETE /vehiculo/:id -> Eliminar Vehiculos.
+ OK - PUT /vehiculo/:id -> Modificar Vehículos.
+ OK - DELETE /vehiculo/:id -> Eliminar Vehiculos.
 - POST /vehiculo/:id/activar -> Ruta activar debe cambiar el campo activo a true
 - POST /vehiculo/:id/desactivar -> Ruta desactivar debe cambiar el campo activo a false
  */

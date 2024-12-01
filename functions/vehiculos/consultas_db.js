@@ -48,5 +48,13 @@ const modificarVehiculo = async (id_vehiculo, data_vehiculo) => {
     return { code: 500, message: "Error en la modificación del equipo." }
    }
 }
+const eliminarVehiculo = async (id_vehiculo) => {
+    const argumentos = {
+        text: "DELETE FROM vehiculos WHERE id=$1 RETURNING *",
+        values: [id_vehiculo]
+    }
+    const { rows: vehiculoEliminado } = await conexion_db.query(argumentos)
+    return { code: 200, vehiculoEliminado, message: "Vehículo eliminado correctamente" }
+}
 
-export { listarVehiculos, registrarVehiculo, modificarVehiculo, consultarIdVehiculo }
+export { listarVehiculos, registrarVehiculo, modificarVehiculo, consultarIdVehiculo, eliminarVehiculo}

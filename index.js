@@ -1,8 +1,8 @@
 import express from "express";
 import { actualizarEquipo, listarEquipos, registrarEquipo, eliminarEquipo } from "./functions/equipos/consultas_db.js";
-import { listarVehiculos, modificarVehiculo, registrarVehiculo } from "./functions/vehiculos/consultas_db.js";
+import { listarVehiculos, modificarVehiculo, registrarVehiculo, eliminarVehiculo } from "./functions/vehiculos/consultas_db.js";
 import {validarRegistro, validarActualizacion, validacionDelete } from "./middleware/equipo/validations.js"
-import { validarModificacion, validarRegistroVehiculo } from "./middleware/vehiculos/validations.js";
+import { validarEliminacion, validarModificacion, validarRegistroVehiculo } from "./middleware/vehiculos/validations.js";
 
 const app = express();
 const port = 3000;
@@ -44,13 +44,18 @@ app.get("/vehiculos", async (req, res) => {
 app.post("/vehiculos", validarRegistroVehiculo, async (req, res) => {
     const dataVehiculo = req.body
     const vehiculo = await registrarVehiculo(dataVehiculo)
-    res.status(vehiculo.code).json({data: vehiculo})
+    res.status(vehiculo.code).json({data: vehiculo || null})
 
 })
-app.put("/vehiculos/:id", validarModificacion,async (req, res) => {
+app.put("/vehiculos/:id", validarModificacion, async (req, res) => {
     const idVehiculo = req.params.id
     const dataVehiculo = req.body
     const vehiculo =  await modificarVehiculo(idVehiculo, dataVehiculo)
-    res.status(vehiculo.code).json({ data: vehiculo })
+    res.status(vehiculo.code).json({ data: vehiculo || null })
+})
+app.delete("/vehiculos/:id", validarEliminacion, async (req, res) => {
+    const id_vehiculo = req.params.id
+    const vehiculoEliminado = await eliminarVehiculo(id_vehiculo)
+    res.status(vehiculoEliminado.code).json({ data: vehiculoEliminado || null })
 })
 app.listen(port, () => console.log(`Servidor escuchando en el puerto ${port}`));
