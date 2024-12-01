@@ -1,5 +1,6 @@
 import express from "express";
 import { actualizarEquipo, listarEquipos, registrarEquipo, eliminarEquipo } from "./functions/equipos/consultas_db.js";
+import { listarVehiculos, registrarVehiculo } from "./functions/vehiculos/consultas_db.js";
 import {validarRegistro, validarActualizacion, validacionDelete } from "./middleware/equipo/validations.js"
 
 const app = express();
@@ -16,13 +17,11 @@ app.get("/equipos", async (req, res) => {
     data: listadoEquipos,
   });
 });
-
 app.post("/equipos", validarRegistro,async (req, res) => {
     const {nombre, marca, cantidad} = req.body  
     const equipoRegistrado = await registrarEquipo(nombre, marca, cantidad)
     res.status(equipoRegistrado.code).json({ message: equipoRegistrado.message, data: equipoRegistrado.registro || null })
 });
-
 app.put("/equipos/:equipoId", validarActualizacion,async (req, res) => {
      //Validar que el equipo ID exista en el registro, en caso de no existir devolver code 404 y un message
 
@@ -31,7 +30,6 @@ app.put("/equipos/:equipoId", validarActualizacion,async (req, res) => {
     const  equipo = await actualizarEquipo(idEquipo, dataEquipo)
     res.status(equipo.code).json({ message: equipo.message, data: equipo.actualizado || null  })
 });
-
 app.delete("/equipos/:id", validacionDelete, async (req, res) => {
     //Validar que el equipo ID exista en el registro, en caso de no existir devolver code 404 y un message
     const equipo = await eliminarEquipo(req.params.id)
@@ -40,5 +38,14 @@ app.delete("/equipos/:id", validacionDelete, async (req, res) => {
 //FIN RUTAS TABLA EQUIPOS --------------------------------------->
 
 //RUTAS TABLA VEHICULOS --------------------------------------->
+app.get("/vehiculos", async (req, res) => {
+    const listadoVehiculos = await listarVehiculos()
+    res.status(listadoVehiculos.code).json({ message: listadoVehiculos.message, data: listadoVehiculos })
+})
+app.post("/vehiculos", async (req, res) => {
+    const dataVehiculo = req.body
+    const vehiculo = await registrarVehiculo(dataVehiculo)
+    res.status(vehiculo.code).json({data: vehiculo})
 
+})
 app.listen(port, () => console.log(`Servidor escuchando en el puerto ${port}`));
