@@ -1,6 +1,6 @@
 import express from "express";
 import { actualizarEquipo, listarEquipos, registrarEquipo, eliminarEquipo } from "./functions/equipos/consultas_db.js";
-import { listarVehiculos, modificarVehiculo, registrarVehiculo, eliminarVehiculo, desactivarVehiculo } from "./functions/vehiculos/consultas_db.js";
+import { listarVehiculos, modificarVehiculo, registrarVehiculo, eliminarVehiculo, desactivarVehiculo, activarVehiculo } from "./functions/vehiculos/consultas_db.js";
 import {validarRegistro, validarActualizacion, validacionDelete } from "./middleware/equipo/validations.js"
 import { validarEliminacion, validarModificacion, validarRegistroVehiculo } from "./middleware/vehiculos/validations.js";
 
@@ -64,5 +64,12 @@ app.post("/vehiculos/:id/desactivar", async (req, res) => {
     const vehiculoDesactivado = await desactivarVehiculo(id, activo)
 
     res.status(vehiculoDesactivado.code).json({ data: vehiculoDesactivado || null })
+})
+app.post("/vehiculos/:id/activar", async (req, res) => {
+    const { id } = req.params
+    const { activo } = req.body
+    const vehiculoActivado = await activarVehiculo(id, activo)
+
+    res.status(vehiculoActivado.code).json({ data: vehiculoActivado || null })
 })
 app.listen(port, () => console.log(`Servidor escuchando en el puerto ${port}`));

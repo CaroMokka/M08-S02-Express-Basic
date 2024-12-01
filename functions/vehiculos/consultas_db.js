@@ -58,7 +58,28 @@ const eliminarVehiculo = async (id_vehiculo) => {
     const { rows: vehiculoEliminado } = await conexion_db.query(argumentos)
     return { code: 200, vehiculoEliminado, message: "Vehículo eliminado correctamente" }
 }
-//modificar estado activscion con unn update set con id q me masnda el 
+
+const activarVehiculo = async (id_vehiculo, status) => {
+    try{
+        const vehiculo = await consultarIdVehiculo(id_vehiculo)
+        if(!vehiculo){
+            return { code: 404, message: "Id de vehiculo no existe en los registros" }
+        }
+        if(!vehiculo.activo){
+            const argumentos = {
+                text: "UPDATE vehiculos SET activo=$1 WHERE id=$2 RETURNING *", 
+                values: [status, id_vehiculo]
+            }
+            const { rows: vehiculo } = await conexion_db.query(argumentos)
+            return { code: 200, vehiculo, message: "Vehículo activado correctamente." }
+        } else {
+            return { code: 200, vehiculo, message: "Vehículo ya se encuentra activado." }
+        }
+        
+    } catch(err) {
+        console.log(err.message)
+    }
+}
 const desactivarVehiculo = async (id_vehiculo, activo) => {
     try{
         const vehiculo = await consultarIdVehiculo(id_vehiculo)
@@ -81,4 +102,4 @@ const desactivarVehiculo = async (id_vehiculo, activo) => {
     }
 }
 
-export { listarVehiculos, registrarVehiculo, modificarVehiculo, consultarIdVehiculo, eliminarVehiculo, desactivarVehiculo}
+export { listarVehiculos, registrarVehiculo, modificarVehiculo, consultarIdVehiculo, eliminarVehiculo, desactivarVehiculo, activarVehiculo}

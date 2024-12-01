@@ -12,6 +12,6 @@ Crear una API REST de gestión de vehículos. Se deben desarrollar las siguiente
  OK - POST /vehiculo -> Registrar Vehículos.
  OK - PUT /vehiculo/:id -> Modificar Vehículos.
  OK - DELETE /vehiculo/:id -> Eliminar Vehiculos.
-- POST /vehiculo/:id/activar -> Ruta activar debe cambiar el campo activo a true
-- POST /vehiculo/:id/desactivar -> Ruta desactivar debe cambiar el campo activo a false
+    - POST /vehiculo/:id/activar -> Ruta activar debe cambiar el campo activo a true
+ OK - POST /vehiculo/:id/  -> Ruta desactivar debe cambiar el campo activo a false
  */
