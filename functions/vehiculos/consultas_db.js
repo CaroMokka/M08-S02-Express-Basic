@@ -1,5 +1,11 @@
 import { conexion_db } from "../../conexion.js"
 
+
+const consultarIdVehiculo = async (id) => {
+    const vehiculo = await conexion_db.query("SELECT * FROM vehiculos WHERE id=$1", [id])
+    return vehiculo.rows[0] || null
+}
+
 const listarVehiculos = async () => {
     const argumentos = {
         text: "SELECT * FROM vehiculos ORDER BY id",
@@ -26,8 +32,21 @@ const registrarVehiculo = async (dataVehiculo) => {
     }
 }
 
-const modificarVehiculo = () => {
-
+const modificarVehiculo = async (id_vehiculo, data_vehiculo) => {
+   try{
+    const argumentos = {
+        text: "UPDATE vehiculos SET patente=$1, marca=$2 WHERE id=$3 RETURNING *", 
+        values: [data_vehiculo.patente.toUpperCase(), data_vehiculo.marca.toUpperCase(), id_vehiculo]
+    }
+    const { rows: vehiculoModificado } = await conexion_db.query(argumentos)
+    return { code: 200, vehiculoModificado , message: "Vehículo modificado exitosamente." }
+   } catch(err) {
+    if(err.code == "23505"){
+        return { code: 409, message: "Ya existe un registro con el mismo nombre y marca." }
+    }
+    console.log(err.message )
+    return { code: 500, message: "Error en la modificación del equipo." }
+   }
 }
 
-export { listarVehiculos, registrarVehiculo }
+export { listarVehiculos, registrarVehiculo, modificarVehiculo, consultarIdVehiculo }

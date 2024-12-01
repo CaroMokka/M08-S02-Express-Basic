@@ -1,7 +1,8 @@
 import express from "express";
 import { actualizarEquipo, listarEquipos, registrarEquipo, eliminarEquipo } from "./functions/equipos/consultas_db.js";
-import { listarVehiculos, registrarVehiculo } from "./functions/vehiculos/consultas_db.js";
+import { listarVehiculos, modificarVehiculo, registrarVehiculo } from "./functions/vehiculos/consultas_db.js";
 import {validarRegistro, validarActualizacion, validacionDelete } from "./middleware/equipo/validations.js"
+import { validarModificacion, validarRegistroVehiculo } from "./middleware/vehiculos/validations.js";
 
 const app = express();
 const port = 3000;
@@ -23,8 +24,6 @@ app.post("/equipos", validarRegistro,async (req, res) => {
     res.status(equipoRegistrado.code).json({ message: equipoRegistrado.message, data: equipoRegistrado.registro || null })
 });
 app.put("/equipos/:equipoId", validarActualizacion,async (req, res) => {
-     //Validar que el equipo ID exista en el registro, en caso de no existir devolver code 404 y un message
-
     const dataEquipo = req.body
     const idEquipo = req.params.equipoId  
     const  equipo = await actualizarEquipo(idEquipo, dataEquipo)
@@ -42,10 +41,16 @@ app.get("/vehiculos", async (req, res) => {
     const listadoVehiculos = await listarVehiculos()
     res.status(listadoVehiculos.code).json({ message: listadoVehiculos.message, data: listadoVehiculos })
 })
-app.post("/vehiculos", async (req, res) => {
+app.post("/vehiculos", validarRegistroVehiculo, async (req, res) => {
     const dataVehiculo = req.body
     const vehiculo = await registrarVehiculo(dataVehiculo)
     res.status(vehiculo.code).json({data: vehiculo})
 
+})
+app.put("/vehiculos/:id", validarModificacion,async (req, res) => {
+    const idVehiculo = req.params.id
+    const dataVehiculo = req.body
+    const vehiculo =  await modificarVehiculo(idVehiculo, dataVehiculo)
+    res.status(vehiculo.code).json({ data: vehiculo })
 })
 app.listen(port, () => console.log(`Servidor escuchando en el puerto ${port}`));
