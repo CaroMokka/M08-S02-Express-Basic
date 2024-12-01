@@ -3,7 +3,11 @@ import { conexion_db } from "../../conexion.js"
 
 const consultarIdVehiculo = async (id) => {
     const vehiculo = await conexion_db.query("SELECT * FROM vehiculos WHERE id=$1", [id])
-    return vehiculo.rows[0] || null
+    if(!vehiculo){
+        return { message: "Id no existe en los registros" }
+    } else {
+        return vehiculo.rows[0] || null
+    }
 }
 
 const listarVehiculos = async () => {
@@ -14,7 +18,6 @@ const listarVehiculos = async () => {
     const { rows: listadoVehiculos } = await conexion_db.query(argumentos)
     return { code: 200, message: "Listado de vehiculos exitoso.", data: listadoVehiculos }
 }
-
 const registrarVehiculo = async (dataVehiculo) => {
     try{
         const argumentos = {
@@ -31,7 +34,6 @@ const registrarVehiculo = async (dataVehiculo) => {
         return { code: 500, message: "Error en el registro de equipo." }
     }
 }
-
 const modificarVehiculo = async (id_vehiculo, data_vehiculo) => {
    try{
     const argumentos = {
@@ -56,5 +58,27 @@ const eliminarVehiculo = async (id_vehiculo) => {
     const { rows: vehiculoEliminado } = await conexion_db.query(argumentos)
     return { code: 200, vehiculoEliminado, message: "Vehículo eliminado correctamente" }
 }
+//modificar estado activscion con unn update set con id q me masnda el 
+const desactivarVehiculo = async (id_vehiculo, activo) => {
+    try{
+        const vehiculo = await consultarIdVehiculo(id_vehiculo)
+        if(!vehiculo){
+            return { code: 404, message: "Id de vehiculo no existe en los registros" }
+        }
+        if(vehiculo.activo){
+            const argumentos = {
+                text: "UPDATE vehiculos SET activo=$1 WHERE id=$2 RETURNING *", 
+                values: [activo, id_vehiculo]
+            }
+            const { rows: vehiculo } = await conexion_db.query(argumentos)
+            return { code: 200, vehiculo, message: "Vehículo desactivado correctamente." }
+        } else {
+            return { code: 200, vehiculo, message: "Vehículo ya se encuentra desactivado." }
+        }
+        
+    } catch(err) {
+        console.log(err.message)
+    }
+}
 
-export { listarVehiculos, registrarVehiculo, modificarVehiculo, consultarIdVehiculo, eliminarVehiculo}
+export { listarVehiculos, registrarVehiculo, modificarVehiculo, consultarIdVehiculo, eliminarVehiculo, desactivarVehiculo}
